@@ -1,0 +1,880 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TicTacToe-Online-v1.0.0",
+    "version": "1.0",
+    "description": "Tic Tac Toe Online Multiplayer Game API",
+    "summary": "REST API for TicTacToe PvP game on Spring Framework"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "tictactoe"
+    }
+  ],
+  "paths": {
+    "/tictactoe/": {
+      "get": {
+        "summary": "Main Page",
+        "tags": [
+          "tictactoe"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-tictactoe",
+        "description": "The main page with a field for entering the player's name and creating or find a game"
+      }
+    },
+    "/tictactoe/registration": {
+      "post": {
+        "summary": "Register new Player",
+        "operationId": "post-tictactoe",
+        "responses": {
+          "201": {
+            "description": "New Player Registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                },
+                "examples": {
+                  "Create new Player": {
+                    "value": {
+                      "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                      "name": "Alice"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "details": {
+                      "type": "string",
+                      "example": "Name length must be greater than 2 and less than 36"
+                    }
+                  }
+                },
+                "examples": {
+                  "Details": {
+                    "value": {
+                      "details": "Name length must be greater than 2 and less than 36"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 32
+                  }
+                }
+              },
+              "examples": {
+                "Register new player": {
+                  "value": {
+                    "name": "Alice"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Post the necessary fields for the API to create or find a new game."
+        },
+        "description": "Register new Player",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ]
+      },
+      "parameters": []
+    },
+    "/tictactoe/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "788e98ca-020f-11ec-9a03-0242ac130003"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "GET Game by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gameID": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "788e98ca-020f-11ec-9a03-0242ac130003"
+                    }
+                  }
+                },
+                "examples": {
+                  "Get game id": {
+                    "value": {
+                      "gameID": "788e98ca-020f-11ec-9a03-0242ac130003"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Game Not Found"
+          }
+        },
+        "operationId": "get-tictactoe-id",
+        "description": "",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "aecf6e0c-c79a-46a9-88bd-73f9fb1ab3f7"
+            },
+            "in": "query",
+            "name": "playerID",
+            "required": true
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Connect Player to game",
+        "operationId": "patch-tictactoe-addplayer",
+        "responses": {
+          "200": {
+            "description": "Player Added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gameID": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "788e98ca-020f-11ec-9a03-0242ac130003"
+                    }
+                  }
+                },
+                "examples": {
+                  "Player is connected to the Game": {
+                    "value": {
+                      "gameID": "788e98ca-020f-11ec-9a03-0242ac130003"
+                    }
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              },
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not Modified"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Game Not Found"
+          },
+          "409": {
+            "description": "Playing Space Is Already Taken"
+          }
+        },
+        "description": "Update the information of an existing game.",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "application/x-www-form-urlencoded"
+            },
+            "in": "header",
+            "name": "Content-Type",
+            "description": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              },
+              "examples": {
+                "Connect Player to game": {
+                  "value": {
+                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                    "name": "Alice"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      }
+    },
+    "/tictactoe/{id}/move": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f581f528-0405-11ec-9a03-0242ac130003"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Make Move",
+        "operationId": "post-tictactoe-id-move",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gameID": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                },
+                "examples": {
+                  "Move": {
+                    "value": {
+                      "gameID": "f22dcc3d-461c-4ab6-b51e-1c1b1fef168f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Game Not Found"
+          },
+          "406": {
+            "description": "Not Acceptable"
+          }
+        },
+        "tags": [
+          "tictactoe"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "description": "application/json",
+            "name": "Content-Type"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "7",
+              "minLength": 0,
+              "maxLength": 8
+            },
+            "in": "query",
+            "name": "position",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              },
+              "examples": {
+                "Make Move": {
+                  "value": {
+                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                    "name": "Alice"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      }
+    },
+    "/tictactoe/{id}/board": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "f581f528-0405-11ec-9a03-0242ac130003",
+            "format": "uuid"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "GET board state by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "minItems": 9,
+                  "maxItems": 9,
+                  "items": {
+                    "type": "string",
+                    "pattern": "[xo ]"
+                  }
+                },
+                "examples": {
+                  "Current board state": {
+                    "value": [
+                      "x",
+                      " ",
+                      "o",
+                      "x",
+                      " ",
+                      "o",
+                      "x",
+                      " ",
+                      "o"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-tictactoe-id-board",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": []
+      }
+    },
+    "/tictactoe/{id}/state": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f581f528-0405-11ec-9a03-0242ac130003"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "GET game state by ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameState"
+                },
+                "examples": {
+                  "Current state of game": {
+                    "value": [
+                      "Waiting Player X"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-tictactoe-id-gameState",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "aecf6e0c-c79a-46a9-88bd-73f9fb1ab3f7"
+            },
+            "in": "query",
+            "name": "playerID",
+            "required": true
+          }
+        ],
+        "description": "State can only be requested by the player of this game"
+      }
+    },
+    "/tictactoe/find": {
+      "get": {
+        "summary": "GET available game",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gameID": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Available game ID": {
+                    "value": {
+                      "gameID": "50bf9d02-03ff-11ec-9a03-0242ac130003"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-tictactoe-findGame",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "aecf6e0c-c79a-46a9-88bd-73f9fb1ab3f7"
+            },
+            "in": "query",
+            "name": "playerID",
+            "required": true
+          }
+        ]
+      },
+      "parameters": []
+    },
+    "/tictactoe/new": {
+      "post": {
+        "summary": "GET new game",
+        "responses": {
+          "201": {
+            "description": "New Game Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gameID": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "Create new Game": {
+                    "value": {
+                      "gameID": "6f48b142-03fe-11ec-9a03-0242ac130003"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "get-tictactoe-newGame",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Player"
+              },
+              "examples": {
+                "Create new Game by Player": {
+                  "value": {
+                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                    "name": "Alice"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        }
+      },
+      "parameters": []
+    },
+    "/tictactoe/game/statistics": {
+      "get": {
+        "summary": "GET games statistics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "maxItems": 200,
+                  "minItems": 0,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gameID": {
+                        "type": "string"
+                      },
+                      "winnerID": {
+                        "type": "string"
+                      },
+                      "winnerName": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 32,
+                        "example": "Bob"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "Statistics": {
+                    "value": [
+                      {
+                        "gameID": "d5c8f9ef-23ad-4269-824b-6aabde61f4f0",
+                        "winner_id": "83a9417a-03fd-11ec-9a03-0242ac130003",
+                        "winner_name": "Bob"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-tictactoe-statistics",
+        "tags": [
+          "tictactoe"
+        ],
+        "parameters": []
+      },
+      "parameters": []
+    },
+    "/tictactoe/player/statistics": {
+      "get": {
+        "summary": "GET players statistics",
+        "tags": [
+          "tictactoe",
+          "player"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "minItems": 0,
+                  "maxItems": 200,
+                  "items": {
+                    "$ref": "#/components/schemas/PlayerStats"
+                  }
+                },
+                "examples": {
+                  "Player Statistics": {
+                    "value": [
+                      {
+                        "id": "9ebcaecf-ac50-407e-b8b4-19fcb4d03383",
+                        "name": "Alice",
+                        "wins": 35,
+                        "defeats": 25,
+                        "draws": 15
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-player-statistics",
+        "parameters": []
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "PlayerStats": {
+        "title": "PlayerStats",
+        "type": "object",
+        "description": "",
+        "examples": [
+          {
+            "id": "9ebcaecf-ac50-407e-b8b4-19fcb4d03383",
+            "name": "Alice",
+            "wins": 35,
+            "defeats": 25,
+            "draws": 15
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the given player.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 36
+          },
+          "wins": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0
+          },
+          "defeats": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0
+          },
+          "draws": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Game": {
+        "title": "Game",
+        "type": "object",
+        "description": "TicTacToe game model",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the given game",
+            "format": "uuid"
+          },
+          "playerX": {
+            "$ref": "#/components/schemas/Player"
+          },
+          "playerO": {
+            "$ref": "#/components/schemas/Player"
+          },
+          "board": {
+            "$ref": "#/components/schemas/Board"
+          },
+          "state": {
+            "$ref": "#/components/schemas/GameState"
+          },
+          "winner": {
+            "$ref": "#/components/schemas/Player"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "GameState": {
+        "type": "array",
+        "examples": [
+          [
+            "Waiting Player X"
+          ]
+        ],
+        "description": "\"Unknown\", \n\"Waiting Player X\", \n\"Waiting Player O\", \n\"In Progress\",\n\"Player X wins\", \n\"Player O wins\", \n\"Draw\"",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "enum": [
+            "Unknown",
+            "Waiting Player X",
+            "Waiting Player O",
+            "In Progress",
+            "Player X wins",
+            "Player O wins",
+            "Draw"
+          ]
+        }
+      },
+      "Board": {
+        "type": "array",
+        "title": "Board",
+        "examples": [
+          [
+            "x",
+            " ",
+            "o",
+            "x",
+            " ",
+            "o",
+            "x",
+            " ",
+            "o"
+          ]
+        ],
+        "description": "TicTacToe game field",
+        "minItems": 9,
+        "maxItems": 9,
+        "items": {
+          "$ref": "#/components/schemas/Mark"
+        }
+      },
+      "Mark": {
+        "type": "array",
+        "title": "Mark",
+        "uniqueItems": true,
+        "description": "E, X, O",
+        "examples": [
+          "x"
+        ],
+        "items": {
+          "type": "string",
+          "enum": [
+            "x",
+            "o",
+            "EMPTY"
+          ],
+          "example": "x"
+        }
+      },
+      "Player": {
+        "title": "Player",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "examples": [
+          {
+            "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+            "name": "Alice"
+          }
+        ]
+      }
+    }
+  }
+}
